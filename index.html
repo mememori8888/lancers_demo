@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Automation Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [isRunning, setIsRunning] = useState(false);
+            const [logs, setLogs] = useState([
+                { id: 1, time: "10:00:23", status: "success", msg: "Amazon SP-API 接続完了" },
+                { id: 2, time: "10:01:05", status: "error", msg: "エラー：顧客ID #8821 の郵便番号が未入力です" },
+                { id: 3, time: "10:01:45", status: "info", msg: "ネクストエンジン在庫同期をスキップしました" },
+            ]);
+
+            const runTask = () => {
+                setIsRunning(true);
+                // Simulate a task run
+                setTimeout(() => {
+                    const newLog = { 
+                        id: Date.now(), 
+                        time: new Date().toLocaleTimeString(), 
+                        status: "success", 
+                        msg: "手動実行が完了しました (GitHub Actions経由)" 
+                    };
+                    setLogs(prev => [newLog, ...prev]);
+                    setIsRunning(false);
+                }, 2000);
+            };
+
+            return (
+                <div className="min-h-screen p-4 md:p-8">
+                    <div className="max-w-5xl mx-auto">
+                        {/* Header */}
+                        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                            <div>
+                                <h1 className="text-2xl font-bold text-slate-800">Amazon Automation Dashboard</h1>
+                                <p className="text-slate-500 text-sm">Python + GitHub Actions (Issue Ops)</p>
+                            </div>
+                            <button 
+                                onClick={runTask}
+                                disabled={isRunning}
+                                className={`px-6 py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-100 ${isRunning ? 'bg-gray-300' : 'bg-orange-500 hover:bg-orange-600 text-white active:scale-95'}`}
+                            >
+                                {isRunning ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                ) : (
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                )}
+                                {isRunning ? '実行中...' : 'タスクを手動実行'}
+                            </button>
+                        </header>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            {/* Status Card 1 */}
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Amazon SP-API</p>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span className="text-lg font-bold">オンライン</span>
+                                </div>
+                            </div>
+                            {/* Status Card 2 */}
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">ネクストエンジン</p>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span className="text-lg font-bold">接続良好</span>
+                                </div>
+                            </div>
+                            {/* Status Card 3 */}
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">GitHub Actions</p>
+                                <div className="flex items-center gap-2 text-slate-700">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                    <span className="text-lg font-bold italic">Issue Ops 有効</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Logs Section */}
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                                <h3 className="font-bold text-slate-700">最近の実行履歴 / ログ</h3>
+                                <span className="text-xs text-slate-400">Total: {logs.length} logs</span>
+                            </div>
+                            <div className="divide-y divide-slate-100">
+                                {logs.map(log => (
+                                    <div key={log.id} className="px-6 py-4 flex items-start gap-4 hover:bg-slate-50 transition-colors">
+                                        <span className="text-xs font-mono text-slate-400 mt-1">{log.time}</span>
+                                        <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase mt-1 ${
+                                            log.status === 'success' ? 'bg-green-100 text-green-600' : 
+                                            log.status === 'error' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
+                                        }`}>
+                                            {log.status}
+                                        </div>
+                                        <p className={`text-sm ${log.status === 'error' ? 'text-red-700 font-medium' : 'text-slate-600'}`}>
+                                            {log.msg}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Maintenance Info */}
+                        <div className="mt-8 p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <div className="flex gap-4">
+                                <div className="text-indigo-500">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 className="text-indigo-900 font-bold text-sm">システム環境情報</h4>
+                                    <p className="text-indigo-700 text-sm mt-1">
+                                        このシステムはGitHub Actionsのクラウド上で動作しています。Macローカル環境の電源に依存せず、24時間指定時刻に実行可能です。
+                                        Issueに特定のキーワードを書き込むことで、個別のリクエストを処理できます。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
