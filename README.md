@@ -14,7 +14,7 @@
 画面操作による不安定なRPAツールではなく、**各システムの「API」を直接連携させる専用プログラム（Python）**を開発します。
 
 * **安定稼働**: 画面デザインの変更に影響されず、API通信で確実にデータを処理します。
-* **視覚的な明確さ (Issue Ops)**: 掲示板（Issue）にコメントがあり、履歴管理が可能です。UI>https://mememori8888.github.io/lancers_demo/
+* **視覚的な明確さ (Issue Ops)**: 掲示板（Issue）にコメントがあり、履歴管理が可能です。UI>https://mememori8888.github.io/lancers_demo/ issue>https://github.com/mememori8888/lancers_demo/issues
 * **維持費実質0円**: クラウド（GitHub Actions）の無料枠を利用し、サーバー代やツール利用料をゼロにします。
 
 
